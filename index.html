@@ -500,12 +500,26 @@ if (result.success) {
         }
 
         // Display Student Info
-        function displayStudentInfo() {
-            document.getElementById('displayName').textContent = studentData.name;
-            document.getElementById('displayGrade').textContent = studentData.grade;
-            document.getElementById('displayClass').textContent = studentData.class;
-            document.getElementById('displayId').textContent = studentData.id;
+    function displayStudentInfo() {
+    if (!studentData) return;
+
+    const elements = {
+        displayName: studentData.name,
+        displayGrade: studentData.grade,
+        displayClass: studentData.class,
+        displayId: studentData.id
+    };
+
+    for (const [id, value] of Object.entries(elements)) {
+        const el = document.getElementById(id);
+        if (el) {
+            // تحويل القيمة إلى نص لضمان العرض
+            el.textContent = value != null ? String(value) : 'غير متوفر';
+        } else {
+            console.warn(`العنصر ذو الـ id "${id}" غير موجود في الصفحة!`);
         }
+    }
+}
 
         // Navigation
         function goToStep2() {
