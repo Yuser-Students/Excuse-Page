@@ -483,12 +483,11 @@
                 const result = await response.json();
                 showLoading(false);
 
-              if (result.success) {
+if (result.success) {
     studentData = result.data;
+    console.log("البيانات المستلمة من السيرفر:", studentData); // ← أضف هذا السطر
     displayStudentInfo();
     goToStep2();
-    // إظهار رسالة نجاح
-    showAlert('✅ تم العثور على الطالبة', 'success');
 } else {
     showAlert(result.message || 'الطالبة غير موجودة', 'error');
 }
