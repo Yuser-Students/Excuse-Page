@@ -325,10 +325,6 @@
         <!-- Step 2: Display Student Info -->
         <div id="step2" class="step">
             <div class="step-header">الخطوة 2️⃣: بيانات الطالبة</div>
-            
-            <div class="alert alert-success" style="display: block;">
-                ✅ تم العثور على الطالبة
-            </div>
 
             <div class="student-info">
                 <div class="info-row">
@@ -487,13 +483,15 @@
                 const result = await response.json();
                 showLoading(false);
 
-                if (result.success) {
-                    studentData = result.data;
-                    displayStudentInfo();
-                    goToStep2();
-                } else {
-                    showAlert(result.message || 'الطالبة غير موجودة', 'error');
-                }
+              if (result.success) {
+    studentData = result.data;
+    displayStudentInfo();
+    goToStep2();
+    // إظهار رسالة نجاح
+    showAlert('✅ تم العثور على الطالبة', 'success');
+} else {
+    showAlert(result.message || 'الطالبة غير موجودة', 'error');
+}
             } catch (error) {
                 showLoading(false);
                 showAlert('خطأ في الاتصال بالخادم', 'error');
