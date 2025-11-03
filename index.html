@@ -307,7 +307,7 @@
             <div class="step-header">الخطوة 1️⃣: البحث عن الطالبة</div>
             
             <div class="form-group">
-                <label class="form-label">
+                <label for="civilIdInput" class="form-label">
                     🆔 رقم السجل المدني <span class="required">*</span>
                 </label>
                 <input 
@@ -358,7 +358,7 @@
             
             <form id="excuseForm">
                 <div class="form-group">
-                    <label class="form-label">
+                    <label for="senderPhone" class="form-label">
                         📱 رقم الجوال المُرسِل <span class="required">*</span>
                     </label>
                     <input 
@@ -372,7 +372,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">
+                    <label for="excuseDate" class="form-label">
                         📅 تاريخ الاستئذان <span class="required">*</span>
                     </label>
                     <input 
@@ -384,7 +384,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">
+                    <label for="excuseTime" class="form-label">
                         ⏰ وقت الاستئذان <span class="required">*</span>
                     </label>
                     <input 
@@ -396,7 +396,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">
+                    <label for="excuseReason" class="form-label">
                         📝 سبب الاستئذان <span class="required">*</span>
                     </label>
                     <textarea 
@@ -415,8 +415,8 @@
     </div>
 
     <script>
-        // ضع هنا Web App URL الخاص بك
-        const API_URL = "https://script.google.com/macros/s/AKfycbyzLmNcvkJWG-0IUzXL4_omYaarctRfnlWx1dH5FR9Ko9oP3soELaue7Olx9AYzcoxEzg/exec';
+        // ✅ Web App URL بدون مسافات زائدة
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyzLmNcvkJWG-0IUzXL4_omYaarctRfnlWx1dH5FR9Ko9oP3soELaue7Olx9AYzcoxEzg/exec';
         
         let studentData = null;
 
@@ -453,7 +453,7 @@
             e.target.value = e.target.value.replace(/[^0-9]/g, '');
         });
 
-        // Validate Phone input (numbers only, starts with 05)
+        // Validate Phone input (numbers only)
         document.getElementById('senderPhone').addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/[^0-9]/g, '');
         });
@@ -462,7 +462,6 @@
         async function handleSearch() {
             const civilId = civilIdInput.value.trim();
 
-            // Validation
             if (civilId.length !== 10) {
                 showAlert('يجب أن يكون السجل المدني 10 أرقام', 'error');
                 return;
@@ -483,14 +482,14 @@
                 const result = await response.json();
                 showLoading(false);
 
-if (result.success) {
-    studentData = result.data;
-    console.log("البيانات المستلمة من السيرفر:", studentData); // ← أضف هذا السطر
-    displayStudentInfo();
-    goToStep2();
-} else {
-    showAlert(result.message || 'الطالبة غير موجودة', 'error');
-}
+                if (result.success) {
+                    studentData = result.data;
+                    console.log("البيانات المستلمة:", studentData);
+                    goToStep2();           // أولًا: اعرض الخطوة
+                    displayStudentInfo();  // ثانيًا: املأ البيانات
+                } else {
+                    showAlert(result.message || 'الطالبة غير موجودة', 'error');
+                }
             } catch (error) {
                 showLoading(false);
                 showAlert('خطأ في الاتصال بالخادم', 'error');
@@ -500,26 +499,23 @@ if (result.success) {
         }
 
         // Display Student Info
-    function displayStudentInfo() {
-    if (!studentData) return;
+        function displayStudentInfo() {
+            if (!studentData) return;
 
-    const elements = {
-        displayName: studentData.name,
-        displayGrade: studentData.grade,
-        displayClass: studentData.class,
-        displayId: studentData.id
-    };
+            const fields = {
+                displayName: studentData.name,
+                displayGrade: studentData.grade,
+                displayClass: studentData.class,
+                displayId: studentData.id
+            };
 
-    for (const [id, value] of Object.entries(elements)) {
-        const el = document.getElementById(id);
-        if (el) {
-            // تحويل القيمة إلى نص لضمان العرض
-            el.textContent = value != null ? String(value) : 'غير متوفر';
-        } else {
-            console.warn(`العنصر ذو الـ id "${id}" غير موجود في الصفحة!`);
+            for (const [id, value] of Object.entries(fields)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.textContent = value != null ? String(value) : '—';
+                }
+            }
         }
-    }
-}
 
         // Navigation
         function goToStep2() {
@@ -543,7 +539,6 @@ if (result.success) {
             const excuseTime = document.getElementById('excuseTime').value;
             const excuseReason = document.getElementById('excuseReason').value.trim();
 
-            // Validation
             if (!senderPhone.match(/^05\d{8}$/)) {
                 showAlert('رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام', 'error');
                 return;
@@ -582,11 +577,7 @@ if (result.success) {
 
                 if (result.success) {
                     showAlert(`✅ ${result.message}`, 'success');
-                    
-                    // Reset after 3 seconds
-                    setTimeout(() => {
-                        resetForm();
-                    }, 3000);
+                    setTimeout(resetForm, 3000);
                 } else {
                     showAlert(result.message, 'error');
                 }
@@ -615,10 +606,7 @@ if (result.success) {
             const alert = type === 'success' ? alertSuccess : alertError;
             alert.textContent = message;
             alert.style.display = 'block';
-            
-            setTimeout(() => {
-                alert.style.display = 'none';
-            }, 5000);
+            setTimeout(() => alert.style.display = 'none', 5000);
         }
 
         function hideAlert() {
@@ -626,18 +614,11 @@ if (result.success) {
             alertError.style.display = 'none';
         }
 
-        // Loading Functions
-      function showLoading(show) {
-    loading.style.display = show ? 'block' : 'none';
-    
-    if (show) {
-        // إخفاء جميع الخطوات بإزالة فئة active
-        step1.classList.remove('active');
-        step2.classList.remove('active');
-        step3.classList.remove('active');
-    }
-    // عند show = false، لا نفعل شيئًا — سيُعاد العرض عبر goToStepX()
-}
+        // ✅ Loading: لا تلمس عرض الخطوات يدويًّا
+        function showLoading(show) {
+            loading.style.display = show ? 'block' : 'none';
+            // التحكم في الخطوات يتم عبر class="active" فقط
+        }
     </script>
 </body>
 </html>
