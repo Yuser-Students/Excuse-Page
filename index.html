@@ -463,56 +463,44 @@
         });
 
         // Handle Search
-        // Handle Search
-async function handleSearch() {
-    const civilId = civilIdInput.value.trim();
+        async function handleSearch() {
+            const civilId = civilIdInput.value.trim();
 
-    // Validation
-    if (civilId.length !== 10) {
-        showAlert('يجب أن يكون السجل المدني 10 أرقام', 'error');
-        return;
-    }
+            // Validation
+            if (civilId.length !== 10) {
+                showAlert('يجب أن يكون السجل المدني 10 أرقام', 'error');
+                return;
+            }
 
-    try {
-        showLoading(true);
-        searchBtn.disabled = true;
+            try {
+                showLoading(true);
+                searchBtn.disabled = true;
 
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'getStudentByCivilId',
-                civilId: civilId
-            })
-        });
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'getStudentByCivilId',
+                        civilId: civilId
+                    })
+                });
 
-        const result = await response.json();
-        console.log("📌 رد السيرفر:", result); // ✅ مهم جدًا لمعرفة المشكلة
+                const result = await response.json();
+                showLoading(false);
 
-        showLoading(false);
-
-        if (result.success && result.data) {
-            studentData = {
-                name: result.data.name,
-                grade: result.data.grade,
-                class: result.data.class,
-                id: result.data.id,
-                civilId: civilId // ✅ نضيفها لأنك محتاجها في إرسال الطلب
-            };
-
-            displayStudentInfo();   // ✅ يعرض البيانات داخل Step2
-            goToStep2();            // ✅ ينتقل للمرحلة الثانية
-        } else {
-            showAlert(result.message || 'الطالبة غير موجودة', 'error');
+                if (result.success) {
+                    studentData = result.data;
+                    displayStudentInfo();
+                    goToStep2();
+                } else {
+                    showAlert(result.message || 'الطالبة غير موجودة', 'error');
+                }
+            } catch (error) {
+                showLoading(false);
+                showAlert('خطأ في الاتصال بالخادم', 'error');
+            } finally {
+                searchBtn.disabled = false;
+            }
         }
-    } catch (error) {
-        showLoading(false);
-        showAlert('⚠ خطأ في الاتصال بالخادم', 'error');
-        console.error(error);
-    } finally {
-        searchBtn.disabled = false;
-    }
-}
-
 
         // Display Student Info
         function displayStudentInfo() {
@@ -636,13 +624,6 @@ async function handleSearch() {
                 step3.style.display = 'none';
             }
         }
-        function goToStep2() {
-    hideAlert();
-    step1.classList.remove('active');
-    step2.classList.add('active');
-    step3.classList.remove('active'); // ✅ تأكيد منع التعليق
-}
-
     </script>
 </body>
 </html>
