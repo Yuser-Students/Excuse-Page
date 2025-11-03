@@ -416,7 +416,7 @@
 
     <script>
         // ضع هنا Web App URL الخاص بك
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyzLmNcvkJWG-0IUzXL4_omYaarctRfnlWx1dH5FR9Ko9oP3soELaue7Olx9AYzcoxEzg/exec';
+        const API_URL = "https://script.google.com/macros/s/AKfycbyzLmNcvkJWG-0IUzXL4_omYaarctRfnlWx1dH5FR9Ko9oP3soELaue7Olx9AYzcoxEzg/exec';
         
         let studentData = null;
 
@@ -627,14 +627,17 @@ if (result.success) {
         }
 
         // Loading Functions
-        function showLoading(show) {
-            loading.style.display = show ? 'block' : 'none';
-            if (show) {
-                step1.style.display = 'none';
-                step2.style.display = 'none';
-                step3.style.display = 'none';
-            }
-        }
+      function showLoading(show) {
+    loading.style.display = show ? 'block' : 'none';
+    
+    if (show) {
+        // إخفاء جميع الخطوات بإزالة فئة active
+        step1.classList.remove('active');
+        step2.classList.remove('active');
+        step3.classList.remove('active');
+    }
+    // عند show = false، لا نفعل شيئًا — سيُعاد العرض عبر goToStepX()
+}
     </script>
 </body>
 </html>
